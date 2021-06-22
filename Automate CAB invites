@@ -1,0 +1,13 @@
+/*
+This script, when put as part of a Scheduled job, will automate CAB invites out to all attendees in a CAB meeting. 
+*/
+
+var gr = new GlideRecord('cab_meeting');
+gr.addEncodedQuery("active=true^startONThis week@javascript:gs.beginningOfThisWeek()@javascript:gs.endOfThisWeek()");
+gr.query();
+gr.next();
+gs.print(gr.getRowCount());
+
+var notifiedAttendeesCount = new sn_change_cab.CABMeeting(gr).createCABAttendeeNotifyEvents();
+var infoMessage = notifiedAttendeesCount > 0 ? gs.getMessage("Notifications sent to all attendees") : gs.getMessage("No notifications sent as there are no attendees");
+gs.print(infoMessage);
