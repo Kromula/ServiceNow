@@ -1,0 +1,18 @@
+/*
+This script when put as part of a scheduled job, will automate the creation of the Agenda for a CAB meeting. 
+*/
+
+var encQuery = 'startONToday@javascript:gs.beginningOfToday()@javascript:gs.endOfToday()^active=true';
+var grMeeting = new GlideRecord('cab_meeting');
+grMeeting.addEncodedQuery(encQuery);
+grMeeting.query();
+
+while (grMeeting.next()) {
+    if (grMeeting.getRowCount() == 1) {
+        var cabAgendaClass = new sn_change_cab.CABMeeting(grMeeting);
+        cabAgendaClass.refreshChangeAgendaItems();
+        gs.info('This scheduled job was successful');
+    } else {
+        gs.error('The Scheduled Job failed for Automate CAB Refresh Agenda Items');
+    }
+}
